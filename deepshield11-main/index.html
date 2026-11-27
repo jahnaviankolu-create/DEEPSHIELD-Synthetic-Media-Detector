@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepShield – Intelligent Synthetic Media Detector</title>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- ApexCharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- jsPDF CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon-container">
+                    <i data-lucide="shield-alert" style="color: #04060d; width: 20px; height: 20px; stroke-width: 2.5;"></i>
+                </div>
+                <div>
+                    <h1 class="logo-text">DeepShield</h1>
+                    <div class="logo-sub">AI Detection Lab</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item active" data-view="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-view="analyze">
+                    <i data-lucide="scan-face"></i>
+                    <span>Analyze Media</span>
+                </div>
+                <div class="nav-item" data-view="history">
+                    <i data-lucide="history"></i>
+                    <span>Analysis History</span>
+                </div>
+                <div class="nav-item" data-view="reports">
+                    <i data-lucide="bar-chart-3"></i>
+                    <span>Reports</span>
+                </div>
+                <div class="nav-item" data-view="settings">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="nav-item" data-view="about">
+                    <i data-lucide="info"></i>
+                    <span>About Project</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-profile glass-panel">
+                <div class="profile-avatar">OP</div>
+                <div class="profile-info">
+                    <div class="profile-name">Operator-04</div>
+                    <div class="profile-role">Level 2 Security</div>
+                </div>
+                <div class="sidebar-footer-btn" title="Sign Out" id="logout-btn">
+                    <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-viewport">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <div class="menu-toggle" id="sidebar-toggle">
+                        <i data-lucide="menu"></i>
+                    </div>
+                    <h2 class="page-title" id="viewport-title">Dashboard Overview</h2>
+                </div>
+
+                <div class="top-bar-center">
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search files, scan IDs or threat status..." class="search-input" id="global-search">
+                    </div>
+                </div>
+
+                <div class="top-bar-right">
+                    <div class="status-badge">
+                        <span class="status-dot"></span>
+                        <span>SHIELDNET ACTIVE</span>
+                    </div>
+                    <div class="topbar-actions">
+                        <button class="topbar-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme" aria-label="Toggle Light/Dark Theme">
+                            <i data-lucide="moon" id="theme-icon" style="width: 18px; height: 18px;"></i>
+                        </button>
+                        <button class="topbar-btn" title="System Health" aria-label="System Health">
+                            <i data-lucide="activity" style="width: 18px; height: 18px;"></i>
+                        </button>
+                        <button class="topbar-btn" title="Notifications" aria-label="Notifications">
+                            <i data-lucide="bell" style="width: 18px; height: 18px;"></i>
+                            <span class="topbar-btn-badge"></span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Panels -->
+            <div class="content-body">
+                
+                <!-- 1. DASHBOARD VIEW -->
+                <section id="dashboard-view" class="view-section active">
+                    <!-- Stats Grid (6 Cards) -->
+                    <div class="dashboard-grid stats-grid-6">
+                        <div class="glass-card stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">Total Analyzed</span>
+                                <div class="stat-icon-wrapper">
+                                    <i data-lucide="database" style="width: 18px; height: 18px;"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-total">1,482</div>
+                            <div class="stat-footer">
+                                <span class="stat-trend up"><i data-lucide="trending-up" style="width: 12px; height: 12px;"></i> +12%</span>
+                                <span class="stat-time">vs last week</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card stat-card danger">
+                            <div class="stat-header">
+                                <span class="stat-title">Fake Media Count</span>
+                                <div class="stat-icon-wrapper">
+                                    <i data-lucide="alert-octagon" style="width: 18px; height: 18px;"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-fake">342</div>
+                            <div class="stat-footer">
+                                <span class="stat-trend up"><i data-lucide="trending-up" style="width: 12px; height: 12px;"></i> +5.4%</span>
+                                <span class="stat-time">deepfakes identified</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card stat-card safe">
+                            <div class="stat-header">
+                                <span class="stat-title">Real Media Count</span>
+                                <div class="stat-icon-wrapper">
+                                    <i data-lucide="shield-check" style="width: 18px; height: 18px;"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-real">1,140</div>
+                            <div class="stat-footer">
+                                <span class="stat-trend down"><i data-lucide="trending-down" style="width: 12px; height: 12px;"></i> -3.2%</span>
+                                <span class="stat-time">clean score</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card stat-card media-img">
+                            <div class="stat-header">
+                                <span class="stat-title">Images Processed</span>
+                                <div class="stat-icon-wrapper">
+                                    <i data-lucide="image" style="width: 18px; height: 18px;"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-images">445</div>
+                            <div class="stat-footer">
+                                <span class="stat-time">Analyzed images</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card stat-card media-vid">
+                            <div class="stat-header">
+                                <span class="stat-title">Videos Processed</span>
+                                <div class="stat-icon-wrapper">
+                                    <i data-lucide="video" style="width: 18px; height: 18px;"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-videos">815</div>
+                            <div class="stat-footer">
+                                <span class="stat-time">Analyzed videos</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card stat-card media-aud">
+                            <div class="stat-header">
+                                <span class="stat-title">Audio Processed</span>
+                                <div class="stat-icon-wrapper">
+                                    <i data-lucide="mic" style="width: 18px; height: 18px;"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-audio">222</div>
+                            <div class="stat-footer">
+                                <span class="stat-time">Analyzed audio clips</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">Avg Confidence</span>
+                                <div class="stat-icon-wrapper">
+                                    <i data-lucide="percent" style="width: 18px; height: 18px;"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-avg-confidence">98.7%</div>
+                            <div class="stat-footer">
+                                <span class="stat-trend up"><i data-lucide="trending-up" style="width: 12px; height: 12px;"></i> +0.4%</span>
+                                <span class="stat-time">neural certainty</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card stat-card safe">
+                            <div class="stat-header">
+                                <span class="stat-title">Detection Accuracy</span>
+                                <div class="stat-icon-wrapper">
+                                    <i data-lucide="target" style="width: 18px; height: 18px;"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-accuracy">99.4%</div>
+                            <div class="stat-footer">
+                                <span class="stat-trend up"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i> Verified</span>
+                                <span class="stat-time">benchmark score</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modern Charts Layout -->
+                    <div class="dashboard-charts-layout">
+                        <!-- 1. Line Chart: Detection Trends -->
+                        <div class="glass-card chart-panel">
+                            <div class="dashboard-panel-title">
+                                <span>Detection Trends (Last 7 Days)</span>
+                                <i data-lucide="line-chart" style="width: 15px; height: 15px; color: var(--color-cyan);"></i>
+                            </div>
+                            <div id="apex-trend-chart"></div>
+                        </div>
+
+                        <!-- 2. Bar Chart: Monthly Statistics -->
+                        <div class="glass-card chart-panel">
+                            <div class="dashboard-panel-title">
+                                <span>Monthly Statistics & Media Format Breakdown</span>
+                                <i data-lucide="bar-chart-2" style="width: 15px; height: 15px; color: var(--color-purple);"></i>
+                            </div>
+                            <div id="apex-bar-chart"></div>
+                        </div>
+
+                        <!-- 3. Pie/Donut Chart: Media Ratio -->
+                        <div class="glass-card chart-panel">
+                            <div class="dashboard-panel-title">
+                                <span>Media Category Ratio</span>
+                                <i data-lucide="pie-chart" style="width: 15px; height: 15px; color: var(--color-warning);"></i>
+                            </div>
+                            <div id="apex-donut-chart"></div>
+                        </div>
+                        
+                        <!-- 4. Radar Chart: Model Confidence Vector -->
+                        <div class="glass-card chart-panel">
+                            <div class="dashboard-panel-title">
+                                <span>Model Confidence & Accuracy Vector</span>
+                                <i data-lucide="cpu" style="width: 15px; height: 15px; color: var(--color-cyan);"></i>
+                            </div>
+                            <div id="apex-radar-chart"></div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Widgets Layout (4 Cards) -->
+                    <div class="dashboard-widgets-grid">
+                        <!-- Recent Analyses -->
+                        <div class="glass-card widget-card">
+                            <div class="dashboard-panel-title">
+                                <span>Recent Analyses</span>
+                                <i data-lucide="activity" style="width: 16px; height: 16px; color: var(--color-cyan);"></i>
+                            </div>
+                            <div class="recent-analyses-list" id="recent-analyses-widget">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Recent Reports -->
+                        <div class="glass-card widget-card">
+                            <div class="dashboard-panel-title">
+                                <span>Recent Reports</span>
+                                <i data-lucide="file-text" style="width: 16px; height: 16px; color: var(--color-purple);"></i>
+                            </div>
+                            <div class="recent-reports-list">
+                                <div class="report-item">
+                                    <div class="report-icon"><i data-lucide="file-bar-chart"></i></div>
+                                    <div class="report-info">
+                                        <div class="report-name">Q2 Deepfake Analytics</div>
+                                        <div class="report-date">Generated: Today, 09:45 AM</div>
+                                    </div>
+                                    <button class="btn-download-icon"><i data-lucide="download"></i></button>
+                                </div>
+                                <div class="report-item">
+                                    <div class="report-icon"><i data-lucide="shield"></i></div>
+                                    <div class="report-info">
+                                        <div class="report-name">Weekly Threat Advisory</div>
+                                        <div class="report-date">Generated: Yesterday</div>
+                                    </div>
+                                    <button class="btn-download-icon"><i data-lucide="download"></i></button>
+                                </div>
+                                <div class="report-item">
+                                    <div class="report-icon"><i data-lucide="alert-triangle"></i></div>
+                                    <div class="report-info">
+                                        <div class="report-name">Voice Clone Spike Analysis</div>
+                                        <div class="report-date">Generated: Jul 18, 2026</div>
+                                    </div>
+                                    <button class="btn-download-icon"><i data-lucide="download"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Latest Detection -->
+                        <div class="glass-card widget-card spotlight-card">
+                            <div class="dashboard-panel-title">
+                                <span>Latest Detection</span>
+                                <i data-lucide="crosshair" style="width: 16px; height: 16px; color: var(--color-red);"></i>
+                            </div>
+                            <div class="latest-detection-content" id="latest-detection-widget">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="glass-card widget-card">
+                            <div class="dashboard-panel-title">
+                                <span>Quick Actions</span>
+                                <i data-lucide="zap" style="width: 16px; height: 16px; color: var(--color-warning);"></i>
+                            </div>
+                            <div class="quick-actions-grid">
+                                <button class="action-btn" id="qa-new-scan">
+                                    <i data-lucide="scan"></i>
+                                    <span>Analyze New Media</span>
+                                </button>
+                                <button class="action-btn" id="qa-report">
+                                    <i data-lucide="file-plus"></i>
+                                    <span>Generate Audit Report</span>
+                                </button>
+                                <button class="action-btn" id="qa-settings">
+                                    <i data-lucide="sliders"></i>
+                                    <span>Engine Settings</span>
+                                </button>
+                                <button class="action-btn" id="qa-diagnostics">
+                                    <i data-lucide="cpu"></i>
+                                    <span>Run Diagnostics</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. ANALYZE MEDIA VIEW -->
+                <section id="analyze-view" class="view-section">
+                    
+                    <!-- Page Header -->
+                    <div class="analyze-page-header">
+                        <div class="analyze-header-text">
+                            <h2 class="analyze-page-title">Forensic Media Analyzer</h2>
+                            <p class="analyze-page-sub">Upload any image, video, or audio file and let our ensemble AI engines detect synthetic manipulations with high confidence.</p>
+                        </div>
+                        <div class="analyze-header-badges">
+                            <div class="engine-badge">
+                                <span class="engine-badge-dot"></span>
+                                ShieldNet Engine Active
+                            </div>
+                            <div class="engine-badge purple">
+                                <i data-lucide="cpu" style="width:12px;height:12px;"></i>
+                                4 Models Loaded
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analyze-main-grid">
+
+                        <!-- LEFT: Upload + Preview Column -->
+                        <div class="analyze-left-col">
+
+                            <!-- UPLOAD ZONE -->
+                            <div class="premium-drop-zone glass-card" id="drop-zone">
+                                <input type="file" id="media-file-input" class="upload-file-input" accept="image/*,video/*,audio/*">
+
+                                <!-- State 1: Upload Prompt -->
+                                <div class="prem-upload-prompt" id="upload-prompt">
+                                    <div class="upload-orbit-ring">
+                                        <div class="upload-orbit-icon">
+                                            <i data-lucide="cloud-upload" style="width:36px;height:36px;color:var(--color-cyan);"></i>
+                                        </div>
+                                        <div class="orbit-ring ring-1"></div>
+                                        <div class="orbit-ring ring-2"></div>
+                                        <div class="orbit-ring ring-3"></div>
+                                    </div>
+
+                                    <h3 class="prem-upload-title">Drop Your Media File Here</h3>
+                                    <p class="prem-upload-desc">Drag &amp; drop any media file, or click to browse from your device</p>
+
+                                    <div class="supported-types-row">
+                                        <div class="type-chip image-chip">
+                                            <i data-lucide="image" style="width:14px;height:14px;"></i>
+                                            Images
+                                        </div>
+                                        <div class="type-chip video-chip">
+                                            <i data-lucide="video" style="width:14px;height:14px;"></i>
+                                            Videos
+                                        </div>
+                                        <div class="type-chip audio-chip">
+                                            <i data-lucide="music" style="width:14px;height:14px;"></i>
+                                            Audio
+                                        </div>
+                                    </div>
+
+                                    <button class="prem-browse-btn" id="browse-btn">
+                                        <i data-lucide="folder-open" style="width:16px;height:16px;"></i>
+                                        Browse Local Drive
+                                    </button>
+
+                                    <p class="upload-limits-note">Supports PNG, JPG, WEBP, MP4, MOV, AVI, MP3, WAV, FLAC · Max 500MB</p>
+                                </div>
+
+                                <!-- State 2: File Preview -->
+                                <div class="prem-preview-container" id="preview-container" style="display:none;">
+                                    
+                                    <!-- Preview Media Area -->
+                                    <div class="prem-preview-media-area" id="preview-wrapper">
+                                        <!-- Media content populated dynamically -->
+                                    </div>
+
+                                    <!-- Scanning Overlay -->
+                                    <div class="scanning-overlay" id="scanning-effect" style="display:none;">
+                                        <div class="scanning-bar"></div>
+                                        <div class="scanning-grid"></div>
+                                    </div>
+
+                                    <!-- Audio Player (only shown for audio) -->
+                                    <div class="prem-audio-player" id="audio-player-panel" style="display:none;">
+                                        <div class="audio-waveform-container" id="audio-waveform">
+                                            <!-- Generated by JS -->
+                                        </div>
+                                        <div class="audio-controls">
+                                            <button class="audio-ctrl-btn" id="audio-play-btn">
+                                                <i data-lucide="play" style="width:18px;height:18px;"></i>
+                                            </button>
+                                            <div class="audio-progress-track">
+                                                <div class="audio-progress-fill" id="audio-progress"></div>
+                                            </div>
+                                            <span class="audio-time-label" id="audio-time">0:00</span>
+                                            <audio id="audio-element" style="display:none;"></audio>
+                                        </div>
+                                    </div>
+
+                                    <!-- File Info Strip -->
+                                    <div class="prem-file-info-strip">
+                                        <div class="prem-file-type-badge" id="prem-file-type-badge">
+                                            <i data-lucide="image" style="width:14px;height:14px;"></i>
+                                            <span id="prem-file-type-label">IMAGE</span>
+                                        </div>
+                                        <div class="prem-file-details">
+                                            <span class="prem-file-name" id="preview-file-name">filename.jpg</span>
+                                            <div class="prem-file-meta-row">
+                                                <span class="prem-file-chip" id="preview-file-size">0 MB</span>
+                                                <span class="prem-file-chip" id="preview-file-dim">–</span>
+                                                <span class="prem-file-chip status-chip-ready" id="upload-status-chip">
+                                                    <span class="chip-dot"></span>
+                                                    Ready to Analyze
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <button class="prem-remove-btn" id="remove-file-btn" title="Remove File">
+                                            <i data-lucide="x" style="width:16px;height:16px;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Dragover overlay text -->
+                                <div class="drop-overlay" id="drop-overlay">
+                                    <i data-lucide="download-cloud" style="width:48px;height:48px;color:var(--color-cyan);"></i>
+                                    <span>Release to Upload</span>
+                                </div>
+                            </div>
+
+                            <!-- Analyze Button (shown after file selected) -->
+                            <div class="analyze-cta-area" id="analyze-cta-area" style="display:none;">
+                                <button class="btn-analyze-primary" id="start-scan-btn" disabled>
+                                    <div class="btn-analyze-glow"></div>
+                                    <div class="btn-analyze-content">
+                                        <i data-lucide="scan-face" style="width:22px;height:22px;"></i>
+                                        <div>
+                                            <div class="btn-analyze-main-text">Analyze Media</div>
+                                            <div class="btn-analyze-sub-text">Run Full Forensic Audit</div>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="btn-reset-upload" id="clear-scan-btn">
+                                    <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+                                    Start Over
+                                </button>
+                            </div>
+
+                            <!-- Execution Console -->
+                            <div class="glass-card scan-console-card">
+                                <div class="console-header">
+                                    <div class="console-header-left">
+                                        <span class="console-dot red"></span>
+                                        <span class="console-dot yellow"></span>
+                                        <span class="console-dot green"></span>
+                                        <span class="console-title">Detection Core Stream</span>
+                                    </div>
+                                    <span class="console-status" id="console-status">STANDBY</span>
+                                </div>
+                                <div class="console-terminal" id="terminal-console">
+                                    <div class="console-line info">[SYS] ShieldNet engine waiting for payload input...</div>
+                                    <div class="console-line info">[SYS] Upload a file to initialize forensic audit.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Configuration Panel -->
+                        <div class="analyze-right-col">
+
+                            <!-- Engine Config Card -->
+                            <div class="glass-card config-card">
+                                <div class="config-card-header">
+                                    <i data-lucide="sliders" style="width:16px;height:16px;color:var(--color-cyan);"></i>
+                                    <span>Engine Configuration</span>
+                                </div>
+
+                                <div class="config-item">
+                                    <label class="config-label">AI Detection Engine</label>
+                                    <select class="detector-select" id="engine-select">
+                                        <option value="ShieldNet-V2">⚡ ShieldNet-V2.5 (Ensemble Recommended)</option>
+                                        <option value="GAN-Spotter">🔬 GAN-Spotter (Generative Signature Check)</option>
+                                        <option value="MeshNet-v4">🧊 MeshNet-v4.2 (Facial Geometry Coherence)</option>
+                                        <option value="VoiceSync-V1">🎙️ VoiceSync-V1.8 (Voice Clone Detection)</option>
+                                    </select>
+                                </div>
+
+                                <div class="config-item">
+                                    <label class="config-label">Sensitivity Threshold (<span id="sensitivity-val">75</span>%)</label>
+                                    <div class="sensitivity-range-wrapper">
+                                        <input type="range" min="10" max="95" value="75" class="sensitivity-slider" id="sensitivity-slider">
+                                        <div class="sensitivity-markers">
+                                            <span>Relaxed</span>
+                                            <span>Standard</span>
+                                            <span>Extreme</span>
+                                        </div>
+                                    </div>
+                                    <div class="sensitivity-level-bar">
+                                        <div class="slevel-fill" id="slevel-fill" style="width:75%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="config-divider"></div>
+
+                                <div class="config-item">
+                                    <label class="config-label">Analysis Modules</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" checked id="chk-deep-scan">
+                                            <span class="custom-checkbox"><i data-lucide="check"></i></span>
+                                            <span>Deep Frame Extraction (Multi-pass)</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" checked id="chk-spectral">
+                                            <span class="custom-checkbox"><i data-lucide="check"></i></span>
+                                            <span>Spectral Audio Frequency Check</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" checked id="chk-blockchain">
+                                            <span class="custom-checkbox"><i data-lucide="check"></i></span>
+                                            <span>Cryptographic Metadata Stamp</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="chk-gan">
+                                            <span class="custom-checkbox"><i data-lucide="check"></i></span>
+                                            <span>GAN Convolutional Pattern Scan</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Media Type Info Card -->
+                            <div class="glass-card media-type-info-card" id="media-type-card" style="display:none;">
+                                <div class="config-card-header">
+                                    <i data-lucide="file-scan" style="width:16px;height:16px;color:var(--color-purple);"></i>
+                                    <span>Detected Media Info</span>
+                                </div>
+                                <div class="media-info-grid" id="media-info-grid">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Engine Status Cards -->
+                            <div class="engine-status-card glass-card">
+                                <div class="config-card-header">
+                                    <i data-lucide="activity" style="width:16px;height:16px;color:var(--color-green);"></i>
+                                    <span>Engine Health</span>
+                                </div>
+                                <div class="engine-status-list">
+                                    <div class="engine-status-item">
+                                        <div class="engine-status-name">ShieldNet-V2.5</div>
+                                        <div class="engine-status-right">
+                                            <div class="engine-health-bar"><div class="engine-health-fill" style="width:99%;"></div></div>
+                                            <span class="engine-status-pct">99%</span>
+                                            <span class="status-pill online">ONLINE</span>
+                                        </div>
+                                    </div>
+                                    <div class="engine-status-item">
+                                        <div class="engine-status-name">GAN-Spotter</div>
+                                        <div class="engine-status-right">
+                                            <div class="engine-health-bar"><div class="engine-health-fill" style="width:98%;"></div></div>
+                                            <span class="engine-status-pct">98%</span>
+                                            <span class="status-pill online">ONLINE</span>
+                                        </div>
+                                    </div>
+                                    <div class="engine-status-item">
+                                        <div class="engine-status-name">MeshNet-v4</div>
+                                        <div class="engine-status-right">
+                                            <div class="engine-health-bar"><div class="engine-health-fill" style="width:97%;"></div></div>
+                                            <span class="engine-status-pct">97%</span>
+                                            <span class="status-pill online">ONLINE</span>
+                                        </div>
+                                    </div>
+                                    <div class="engine-status-item">
+                                        <div class="engine-status-name">VoiceSync-V1</div>
+                                        <div class="engine-status-right">
+                                            <div class="engine-health-bar"><div class="engine-health-fill" style="width:95%;"></div></div>
+                                            <span class="engine-status-pct">95%</span>
+                                            <span class="status-pill online">ONLINE</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Results section (Hidden by default) -->
+                    <div class="scan-results-view" id="scan-results-panel" style="margin-top: 28px; display:none;">
+                        <div class="glass-card enterprise-results-card">
+                            
+                            <!-- Large Prediction Hero Banner -->
+                            <div class="result-hero-banner" id="result-hero-banner">
+                                <div class="result-hero-left">
+                                    <div class="result-prediction-badge fake" id="result-prediction-badge">
+                                        <span class="badge-pulse"></span>
+                                        <span id="result-prediction-text">FAKE</span>
+                                    </div>
+                                    <div class="result-hero-text">
+                                        <h3 class="result-hero-title" id="result-hero-title">Synthetic Media Detected</h3>
+                                        <p class="result-hero-sub" id="result-hero-sub">High spatial distortion & generative signatures detected across deep neural layers.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="result-score-block">
+                                    <div class="score-val" id="result-confidence-num">98.73%</div>
+                                    <div class="score-lbl">CONFIDENCE SCORE</div>
+                                </div>
+                            </div>
+
+                            <!-- 6 Metadata Metrics Cards Grid -->
+                            <div class="result-metadata-grid">
+                                <div class="meta-card">
+                                    <div class="meta-icon"><i data-lucide="shield-alert" style="color:var(--color-red);"></i></div>
+                                    <div class="meta-body">
+                                        <span class="meta-label">Risk Level</span>
+                                        <span class="meta-value risk-high" id="res-meta-risk">High Risk</span>
+                                    </div>
+                                </div>
+
+                                <div class="meta-card">
+                                    <div class="meta-icon"><i data-lucide="cpu" style="color:var(--color-cyan);"></i></div>
+                                    <div class="meta-body">
+                                        <span class="meta-label">Model Used</span>
+                                        <span class="meta-value" id="res-meta-model">EfficientNet-B0</span>
+                                    </div>
+                                </div>
+
+                                <div class="meta-card">
+                                    <div class="meta-icon"><i data-lucide="timer" style="color:var(--color-purple);"></i></div>
+                                    <div class="meta-body">
+                                        <span class="meta-label">Processing Time</span>
+                                        <span class="meta-value" id="res-meta-time">2.14s</span>
+                                    </div>
+                                </div>
+
+                                <div class="meta-card">
+                                    <div class="meta-icon"><i data-lucide="file" style="color:var(--color-warning);"></i></div>
+                                    <div class="meta-body">
+                                        <span class="meta-label">Media Type</span>
+                                        <span class="meta-value" id="res-meta-type">IMAGE</span>
+                                    </div>
+                                </div>
+
+                                <div class="meta-card">
+                                    <div class="meta-icon"><i data-lucide="hard-drive" style="color:var(--text-muted);"></i></div>
+                                    <div class="meta-body">
+                                        <span class="meta-label">File Size</span>
+                                        <span class="meta-value" id="res-meta-size">2.4 MB</span>
+                                    </div>
+                                </div>
+
+                                <div class="meta-card">
+                                    <div class="meta-icon"><i data-lucide="calendar" style="color:var(--color-green);"></i></div>
+                                    <div class="meta-body">
+                                        <span class="meta-label">Analysis Date</span>
+                                        <span class="meta-value" id="res-meta-date">2026-07-22 21:48</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Multimodal Video & Audio Stream Breakdown (Shown for Video Analysis) -->
+                            <div class="result-multimodal-section" id="result-multimodal-section" style="display:none; margin-bottom: 24px;">
+                                <h4 class="breakdown-title" style="display:flex; align-items:center; gap:8px;">
+                                    <i data-lucide="video" style="color:var(--color-cyan); width:18px; height:18px;"></i>
+                                    <span>Multimodal Stream Analysis (Video &amp; Audio)</span>
+                                </h4>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 14px;">
+                                    
+                                    <!-- Video Stream Box -->
+                                    <div class="glass-card" style="padding: 16px; border-radius: 12px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                                            <div style="font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:6px;">
+                                                <i data-lucide="film" style="width:16px; height:16px; color:var(--color-cyan);"></i> Video Analysis
+                                            </div>
+                                            <span class="status-pill" id="v-stream-badge">REAL</span>
+                                        </div>
+                                        <div style="font-size:13px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Prediction:</span>
+                                                <strong id="v-stream-pred" style="color:var(--text-bright);">Real</strong>
+                                            </div>
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Confidence:</span>
+                                                <strong id="v-stream-conf" style="color:var(--color-cyan);">88.0%</strong>
+                                            </div>
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Frames Analyzed:</span>
+                                                <strong id="v-stream-frames" style="color:var(--text-bright);">16</strong>
+                                            </div>
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Model Used:</span>
+                                                <strong id="v-stream-model" style="color:var(--text-bright);">VideoMAE</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Audio Stream Box -->
+                                    <div class="glass-card" style="padding: 16px; border-radius: 12px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                                            <div style="font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:6px;">
+                                                <i data-lucide="waves" style="width:16px; height:16px; color:var(--color-purple);"></i> Audio Analysis
+                                            </div>
+                                            <span class="status-pill" id="a-stream-badge">REAL</span>
+                                        </div>
+                                        <div style="font-size:13px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Prediction:</span>
+                                                <strong id="a-stream-pred" style="color:var(--text-bright);">Real</strong>
+                                            </div>
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Confidence:</span>
+                                                <strong id="a-stream-conf" style="color:var(--color-purple);">91.0%</strong>
+                                            </div>
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Model Used:</span>
+                                                <strong id="a-stream-model" style="color:var(--text-bright);">Wav2Vec2</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Overall Verdict Box -->
+                                    <div class="glass-card" style="padding: 16px; border-radius: 12px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                                            <div style="font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:6px;">
+                                                <i data-lucide="shield-check" style="width:16px; height:16px; color:var(--color-green);" id="o-stream-icon"></i> Overall Verdict
+                                            </div>
+                                            <span class="status-pill" id="o-stream-badge">REAL</span>
+                                        </div>
+                                        <div style="font-size:13px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Prediction:</span>
+                                                <strong id="o-stream-pred" style="color:var(--text-bright);">Real</strong>
+                                            </div>
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Confidence:</span>
+                                                <strong id="o-stream-conf" style="color:var(--color-green);">89.0%</strong>
+                                            </div>
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <span>Risk Level:</span>
+                                                <strong id="o-stream-risk" style="color:var(--color-green);">Low Risk</strong>
+                                            </div>
+                                            <div style="display:flex; flex-direction:column; gap:2px; margin-top:2px;">
+                                                <span>Reason:</span>
+                                                <span id="o-stream-reason" style="color:var(--text-bright); font-size:12px; line-height:1.3;">Both video frames and audio track verified authentic.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Forensic Factor Breakdown -->
+                            <div class="result-breakdown-section">
+                                <h4 class="breakdown-title">Forensic Detection Breakdown</h4>
+                                <div class="factor-breakdown">
+                                    <div class="factor-item">
+                                        <div class="factor-header">
+                                            <div class="factor-name-wrapper"><i data-lucide="smile"></i><span>Facial Artifact Cohort</span></div>
+                                            <span class="factor-pct" id="factor-face-pct">88%</span>
+                                        </div>
+                                        <div class="factor-bar-track"><div class="factor-bar-fill red" id="factor-face-bar" style="width: 0%;"></div></div>
+                                    </div>
+
+                                    <div class="factor-item">
+                                        <div class="factor-header">
+                                            <div class="factor-name-wrapper"><i data-lucide="waves"></i><span>Audio Synthesizer Check</span></div>
+                                            <span class="factor-pct" id="factor-voice-pct">12%</span>
+                                        </div>
+                                        <div class="factor-bar-track"><div class="factor-bar-fill green" id="factor-voice-bar" style="width: 0%;"></div></div>
+                                    </div>
+
+                                    <div class="factor-item">
+                                        <div class="factor-header">
+                                            <div class="factor-name-wrapper"><i data-lucide="codepen"></i><span>GAN Signatures</span></div>
+                                            <span class="factor-pct" id="factor-gan-pct">94%</span>
+                                        </div>
+                                        <div class="factor-bar-track"><div class="factor-bar-fill red" id="factor-gan-bar" style="width: 0%;"></div></div>
+                                    </div>
+
+                                    <div class="factor-item">
+                                        <div class="factor-header">
+                                            <div class="factor-name-wrapper"><i data-lucide="link"></i><span>Metadata Anomaly</span></div>
+                                            <span class="factor-pct" id="factor-meta-pct">70%</span>
+                                        </div>
+                                        <div class="factor-bar-track"><div class="factor-bar-fill yellow" id="factor-meta-bar" style="width: 0%;"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Explainability Section -->
+                            <div class="result-explainability-section">
+                                <div class="explainability-header">
+                                    <div>
+                                        <h4 class="explainability-title">
+                                            <i data-lucide="eye" style="color:var(--color-cyan); width:18px; height:18px;"></i>
+                                            AI Model Explainability & Activation Heatmap
+                                        </h4>
+                                        <p class="explainability-sub">
+                                            Highlighted regions influenced the model prediction.
+                                        </p>
+                                    </div>
+                                    <div class="explainability-badge">
+                                        <span class="pulse-dot"></span>
+                                        Grad-CAM v2.4 Active
+                                    </div>
+                                </div>
+
+                                <!-- 1. IMAGE EXPLAINABILITY (Grad-CAM Heatmap & Comparison Mode) -->
+                                <div class="explainability-card image-mode" id="explainability-image-block">
+                                    <div class="mode-selector-bar">
+                                        <span class="mode-bar-label">Visualization Mode:</span>
+                                        <div class="mode-tabs">
+                                            <button class="mode-tab active" data-mode="overlay" id="tab-mode-overlay">
+                                                <i data-lucide="layers" style="width:13px;height:13px;"></i> Overlay
+                                            </button>
+                                            <button class="mode-tab" data-mode="heatmap" id="tab-mode-heatmap">
+                                                <i data-lucide="flame" style="width:13px;height:13px;"></i> Heatmap
+                                            </button>
+                                            <button class="mode-tab" data-mode="original" id="tab-mode-original">
+                                                <i data-lucide="image" style="width:13px;height:13px;"></i> Original
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="visualization-stage">
+                                        <div class="vis-canvas-wrapper" id="vis-canvas-wrapper">
+                                            <canvas id="gradcam-canvas" width="600" height="360"></canvas>
+                                        </div>
+
+                                        <!-- Heatmap Intensity Legend -->
+                                        <div class="vis-legend">
+                                            <span class="legend-lbl">Activation Influence:</span>
+                                            <div class="gradient-bar"></div>
+                                            <div class="gradient-labels">
+                                                <span>Low (0%)</span>
+                                                <span>Medium (50%)</span>
+                                                <span>High Influence (100%)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 2. VIDEO EXPLAINABILITY (Suspicious Keyframes Timeline) -->
+                                <div class="explainability-card video-mode" id="explainability-video-block" style="display:none;">
+                                    <div class="video-frames-header">
+                                        <i data-lucide="film" style="color:var(--color-purple); width:16px; height:16px;"></i>
+                                        <span>Suspicious Frames Keyframe Analysis</span>
+                                    </div>
+                                    <div class="suspicious-frames-grid" id="suspicious-frames-grid">
+                                        <!-- Populated dynamically by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- 3. AUDIO EXPLAINABILITY (Spectrogram Visualization) -->
+                                <div class="explainability-card audio-mode" id="explainability-audio-block" style="display:none;">
+                                    <div class="audio-spectrogram-header">
+                                        <i data-lucide="activity" style="color:var(--color-warning); width:16px; height:16px;"></i>
+                                        <span>Audio Spectrogram & Neural Frequency Heatmap</span>
+                                    </div>
+                                    <div class="spectrogram-canvas-container">
+                                        <canvas id="spectrogram-canvas" width="640" height="200"></canvas>
+                                        <div class="spectrogram-axis">
+                                            <span>0 Hz</span>
+                                            <span>4 kHz</span>
+                                            <span>8 kHz</span>
+                                            <span>14 kHz</span>
+                                            <span>22 kHz (Nyquist Limit)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enterprise Action Buttons Bar -->
+                            <div class="enterprise-actions-bar">
+                                <button class="btn-action-primary" id="btn-result-analyze-again">
+                                    <i data-lucide="rotate-ccw"></i>
+                                    <span>Analyze Again</span>
+                                </button>
+                                
+                                <button class="btn-action-secondary" id="btn-result-download-report">
+                                    <i data-lucide="download"></i>
+                                    <span>Download Report</span>
+                                </button>
+                                
+                                <button class="btn-action-secondary" id="btn-result-share">
+                                    <i data-lucide="share-2"></i>
+                                    <span>Share Result</span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. ANALYSIS HISTORY VIEW -->
+                <section id="history-view" class="view-section">
+                    <div class="glass-card">
+                        <!-- Header & Controls Bar -->
+                        <div class="history-controls-bar">
+                            <div class="history-controls-left">
+                                <div class="search-container" style="max-width: 320px;">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" placeholder="Search filename, prediction..." class="search-input" id="history-search">
+                                </div>
+                            </div>
+                            <div class="filters-wrapper">
+                                <select class="filter-select" id="filter-type">
+                                    <option value="all">All Types</option>
+                                    <option value="image">Images</option>
+                                    <option value="video">Videos</option>
+                                    <option value="audio">Audio</option>
+                                </select>
+                                <select class="filter-select" id="filter-status">
+                                    <option value="all">All Predictions</option>
+                                    <option value="danger">Fake</option>
+                                    <option value="safe">Real</option>
+                                    <option value="warning">Suspicious</option>
+                                </select>
+                                <select class="filter-select" id="history-sort">
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="high-conf">Highest Confidence</option>
+                                    <option value="low-conf">Lowest Confidence</option>
+                                    <option value="name-asc">File Name (A-Z)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Modern Data Table -->
+                        <div class="table-responsive">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>File Name</th>
+                                        <th>Prediction</th>
+                                        <th>Confidence</th>
+                                        <th>Media Type</th>
+                                        <th>Date</th>
+                                        <th style="text-align: right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-table-body">
+                                    <!-- Populated dynamically by app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Modern Pagination Footer -->
+                        <div class="history-pagination-bar">
+                            <div class="pagination-info" id="pagination-info">
+                                Showing <strong>1-5</strong> of <strong>15</strong> analyses
+                            </div>
+
+                            <div class="pagination-controls">
+                                <button class="pagination-btn" id="prev-page-btn" disabled>
+                                    <i data-lucide="chevron-left" style="width:16px;height:16px;"></i> Prev
+                                </button>
+                                <div class="pagination-pages" id="pagination-pages">
+                                    <!-- Page numbers generated dynamically -->
+                                </div>
+                                <button class="pagination-btn" id="next-page-btn">
+                                    Next <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
+                                </button>
+                                
+                                <select class="items-per-page-select" id="items-per-page">
+                                    <option value="5">5 per page</option>
+                                    <option value="10" selected>10 per page</option>
+                                    <option value="25">25 per page</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- 4. REPORTS VIEW -->
+                <section id="reports-view" class="view-section">
+                    <!-- Cards Info -->
+                    <div class="reports-grid">
+                        <div class="glass-card report-summary-card">
+                            <div class="report-summary-header">
+                                <span class="report-summary-title">Audited Data Volume</span>
+                                <i data-lucide="hard-drive" class="report-summary-icon"></i>
+                            </div>
+                            <div class="report-summary-value">42.8 GB</div>
+                            <div class="report-summary-desc">Total raw storage evaluated this month.</div>
+                        </div>
+                        <div class="glass-card report-summary-card">
+                            <div class="report-summary-header">
+                                <span class="report-summary-title">Engine Audit Time</span>
+                                <i data-lucide="hourglass" class="report-summary-icon"></i>
+                            </div>
+                            <div class="report-summary-value">3.2s</div>
+                            <div class="report-summary-desc">Mean computational audit latency.</div>
+                        </div>
+                        <div class="glass-card report-summary-card">
+                            <div class="report-summary-header">
+                                <span class="report-summary-title">Confidence Rate</span>
+                                <i data-lucide="check-square" class="report-summary-icon"></i>
+                            </div>
+                            <div class="report-summary-value">98.9%</div>
+                            <div class="report-summary-desc">Aggregate validation score metrics.</div>
+                        </div>
+                    </div>
+
+                    <!-- Split Layout -->
+                    <div class="reports-charts-layout">
+                        <!-- Bar chart models -->
+                        <div class="glass-card">
+                            <div class="dashboard-panel-title">Engine Workload Breakdown</div>
+                            <div class="bar-chart-container">
+                                <div class="bar-chart-row">
+                                    <span class="bar-chart-lbl">ShieldNet-V2</span>
+                                    <div class="bar-chart-track-wrapper">
+                                        <div class="bar-chart-fill" id="bar-report-shieldnet" style="width: 0%;"></div>
+                                    </div>
+                                    <span class="bar-chart-val">682 scans</span>
+                                </div>
+                                <div class="bar-chart-row">
+                                    <span class="bar-chart-lbl">GAN-Spotter</span>
+                                    <div class="bar-chart-track-wrapper">
+                                        <div class="bar-chart-fill purple" id="bar-report-ganspotter" style="width: 0%;"></div>
+                                    </div>
+                                    <span class="bar-chart-val">412 scans</span>
+                                </div>
+                                <div class="bar-chart-row">
+                                    <span class="bar-chart-lbl">MeshNet-v4</span>
+                                    <div class="bar-chart-track-wrapper">
+                                        <div class="bar-chart-fill green" id="bar-report-meshnet" style="width: 0%;"></div>
+                                    </div>
+                                    <span class="bar-chart-val">280 scans</span>
+                                </div>
+                                <div class="bar-chart-row">
+                                    <span class="bar-chart-lbl">VoiceSync-V1</span>
+                                    <div class="bar-chart-track-wrapper">
+                                        <div class="bar-chart-fill" style="background: var(--color-indigo); width: 0%;" id="bar-report-voicesync"></div>
+                                    </div>
+                                    <span class="bar-chart-val">108 scans</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendations advisory -->
+                        <div class="glass-card">
+                            <div class="dashboard-panel-title">Active AI Threats Advisory</div>
+                            <div class="advisory-box">
+                                <div class="advisory-item urgent">
+                                    <div class="advisory-icon-box">
+                                        <i data-lucide="shield-alert"></i>
+                                    </div>
+                                    <div class="advisory-details">
+                                        <div class="advisory-title">High GAN Activity Identified</div>
+                                        <div class="advisory-desc">A spike in Stable Diffusion XL face meshes is currently targetting media logs. Update model algorithms.</div>
+                                    </div>
+                                </div>
+                                <div class="advisory-item">
+                                    <div class="advisory-icon-box">
+                                        <i data-lucide="alert-triangle"></i>
+                                    </div>
+                                    <div class="advisory-details">
+                                        <div class="advisory-title">Voice Clones Expanding</div>
+                                        <div class="advisory-desc">ElevenLabs v2 speech models are slipping past traditional spectrogram checks. Threshold adjustments recommended.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. SETTINGS VIEW -->
+                <section id="settings-view" class="view-section">
+                    <div class="settings-layout">
+                        <!-- Navigation settings -->
+                        <div class="glass-card settings-nav">
+                            <div class="settings-nav-item active" data-tab="general-settings">
+                                <i data-lucide="sliders-horizontal"></i>
+                                <span>General Audit Policies</span>
+                            </div>
+                            <div class="settings-nav-item" data-tab="api-settings">
+                                <i data-lucide="key-round"></i>
+                                <span>API & Connectors</span>
+                            </div>
+                            <div class="settings-nav-item" data-tab="engine-settings">
+                                <i data-lucide="cpu"></i>
+                                <span>Deep Engine Weights</span>
+                            </div>
+                        </div>
+
+                        <!-- Panes settings -->
+                        <div class="glass-card">
+                            <!-- 1. General Panel -->
+                            <div class="settings-panel active" id="general-settings">
+                                <h3 class="settings-section-title">General Audit Policies</h3>
+                                
+                                <div class="settings-row">
+                                    <div class="settings-info">
+                                        <div class="settings-lbl">Auto Forensic Audit</div>
+                                        <div class="settings-desc">Immediately initialize AI forensic scanning on drop-and-upload actions.</div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="setting-auto-scan" checked>
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="settings-row">
+                                    <div class="settings-info">
+                                        <div class="settings-lbl">Blockchain Anchoring</div>
+                                        <div class="settings-desc">Cryptographically stamp verified safe media on the public ledger.</div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="setting-blockchain-stamp">
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="settings-row">
+                                    <div class="settings-info">
+                                        <div class="settings-lbl">Verbose Logs Generation</div>
+                                        <div class="settings-desc">Keep full step-by-step console logs available for download.</div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="setting-verbose-logs" checked>
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 2. API Panel -->
+                            <div class="settings-panel" id="api-settings">
+                                <h3 class="settings-section-title">API & Connectors</h3>
+                                
+                                <div class="settings-row">
+                                    <div class="settings-info">
+                                        <div class="settings-lbl">DeepShield Cloud Sync</div>
+                                        <div class="settings-desc">Connect to centralized security feeds to download latest GAN weights.</div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="settings-row" style="flex-direction: column; align-items: flex-start; gap: 12px;">
+                                    <div class="settings-info" style="max-width: 100%;">
+                                        <div class="settings-lbl">Forensic Core API Key</div>
+                                        <div class="settings-desc">Generate access keys to authenticate terminal scripts.</div>
+                                    </div>
+                                    <div style="display: flex; width: 100%; gap: 12px;">
+                                        <input type="password" value="ds_live_f89324hka9e8237e1a384f9ad2" class="input-text-settings" style="flex: 1;" readonly>
+                                        <button class="btn-action-secondary" style="flex: 0 0 auto; padding: 0 16px;" onclick="alert('API key copied to clipboard!')">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Engine weights -->
+                            <div class="settings-panel" id="engine-settings">
+                                <h3 class="settings-section-title">Deep Engine Weights</h3>
+                                <div class="settings-row">
+                                    <div class="settings-info">
+                                        <div class="settings-lbl">Confidence Bias Core</div>
+                                        <div class="settings-desc">Configure neural networks default threshold bias rating.</div>
+                                    </div>
+                                    <select class="detector-select" style="width: auto;">
+                                        <option>Conservatively Biased</option>
+                                        <option selected>Standard Uniform</option>
+                                        <option>Aggressive Detections</option>
+                                    </select>
+                                </div>
+                                <div class="settings-row">
+                                    <div class="settings-info">
+                                        <div class="settings-lbl">GPU Compute Allocation</div>
+                                        <div class="settings-desc">Control CUDA execution threads allocated for multi-pass scans.</div>
+                                    </div>
+                                    <select class="detector-select" style="width: auto;">
+                                        <option>Minimal (Low power)</option>
+                                        <option selected>Balanced Grid (Standard)</option>
+                                        <option>High Core Load (Turbo)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Save CTA -->
+                            <button class="btn-settings-save" id="btn-save-settings">Save Configurations</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. ABOUT PROJECT VIEW -->
+                <section id="about-view" class="view-section">
+                    <div class="glass-card">
+                        <div class="about-grid">
+                            <!-- Left description -->
+                            <div class="about-article">
+                                <h3 class="page-title" style="margin-bottom: 16px; color: var(--color-cyan);">Intelligence Shield for Modern Verification</h3>
+                                <p>DeepShield is an industrial-grade synthetic media auditor utilizing advanced deep learning models to identify AI-generated manipulations, GAN signatures, and voice deepfakes. In an era of high-fidelity synthetic forgery, DeepShield secures informational integrity across platforms.</p>
+                                
+                                <h4 class="about-section-header">
+                                    <i data-lucide="workflow" style="width: 18px; height: 18px; color: var(--color-cyan);"></i>
+                                    Forensic Pipeline Workflow
+                                </h4>
+                                <div class="flow-diagram-container">
+                                    <!-- Responsive SVG Network Flow -->
+                                    <svg class="flow-svg" viewBox="0 0 540 120">
+                                        <defs>
+                                            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                                <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--text-muted)" />
+                                            </marker>
+                                        </defs>
+                                        
+                                        <!-- Arrow connectors -->
+                                        <line x1="110" y1="40" x2="160" y2="40" class="flow-arrow" marker-end="url(#arrow)" />
+                                        <line x1="250" y1="40" x2="300" y2="40" class="flow-arrow" marker-end="url(#arrow)" />
+                                        <line x1="390" y1="40" x2="440" y2="40" class="flow-arrow" marker-end="url(#arrow)" />
+
+                                        <!-- Node 1: Payload Input -->
+                                        <rect x="10" y="15" width="100" height="50" class="flow-node active-node" />
+                                        <text x="60" y="38" class="flow-node-text" text-anchor="middle">1. Payload Input</text>
+                                        <text x="60" y="52" class="flow-node-desc" text-anchor="middle">Demux & Frame Extraction</text>
+
+                                        <!-- Node 2: Feature Extraction -->
+                                        <rect x="150" y="15" width="100" height="50" class="flow-node" />
+                                        <text x="200" y="38" class="flow-node-text" text-anchor="middle">2. Forensic Core</text>
+                                        <text x="200" y="52" class="flow-node-desc" text-anchor="middle">GAN & Facial Checks</text>
+
+                                        <!-- Node 3: Verification & Weighting -->
+                                        <rect x="290" y="15" width="100" height="50" class="flow-node" />
+                                        <text x="340" y="38" class="flow-node-text" text-anchor="middle">3. Consensus Model</text>
+                                        <text x="340" y="52" class="flow-node-desc" text-anchor="middle">Weight Ensemble Fusion</text>
+
+                                        <!-- Node 4: Cryptographic Report -->
+                                        <rect x="430" y="15" width="100" height="50" class="flow-node active-node" />
+                                        <text x="480" y="38" class="flow-node-text" text-anchor="middle">4. Audit Output</text>
+                                        <text x="480" y="52" class="flow-node-desc" text-anchor="middle">Cryptographic Cert & Log</text>
+                                    </svg>
+                                </div>
+
+                                <p>DeepShield pipelines intake raw media content, dissect structures into components (mesh sequences for face, spectrogram waveforms for sound, convolutional frequencies for pixel patterns), and score them against the custom ensemble engine.</p>
+                            </div>
+
+                            <!-- Right tech specs -->
+                            <div>
+                                <div class="glass-panel" style="padding: 20px;">
+                                    <h4 style="font-family: var(--font-title); font-size: 15px; font-weight: 700; margin-bottom: 12px;">Technical Architecture</h4>
+                                    <table class="specs-table">
+                                        <tr>
+                                            <td>Frontend Core</td>
+                                            <td>Vanilla HTML5 & CSS3</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Engine Logic</td>
+                                            <td>State Machine Router</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Illustrations</td>
+                                            <td>Responsive SVG Vector</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Aesthetics</td>
+                                            <td>Neo-cyberpunk Glassmorphic</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Core Framework</td>
+                                            <td>Zero Dependency Build</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Futuristic AI Processing Screen Overlay -->
+    <div class="ai-processing-overlay" id="ai-processing-modal" style="display: none;">
+        <div class="ai-processing-card glass-panel">
+            
+            <!-- Rotating AI Neural Core Animation -->
+            <div class="ai-orb-container">
+                <div class="ai-orb-ring ring-outer"></div>
+                <div class="ai-orb-ring ring-middle"></div>
+                <div class="ai-orb-ring ring-inner"></div>
+                <div class="ai-orb-core">
+                    <i data-lucide="cpu" class="ai-core-icon"></i>
+                </div>
+                <div class="ai-orb-particles">
+                    <span class="particle p1"></span>
+                    <span class="particle p2"></span>
+                    <span class="particle p3"></span>
+                    <span class="particle p4"></span>
+                </div>
+            </div>
+
+            <!-- Header Text -->
+            <h3 class="ai-processing-title">DeepShield AI is analyzing your media...</h3>
+            <div class="ai-file-badge" id="ai-processing-filename">
+                <i data-lucide="file-code" style="width: 14px; height: 14px;"></i>
+                <span id="ai-processing-file-text">media_payload.mp4</span>
+            </div>
+
+            <!-- Current Stage Indicator -->
+            <div class="ai-stage-badge" id="ai-stage-badge">
+                <span class="stage-dot"></span>
+                <span id="ai-stage-text">Uploading...</span>
+            </div>
+
+            <!-- Animated Progress Bar -->
+            <div class="ai-progress-wrapper">
+                <div class="ai-progress-header">
+                    <span class="ai-progress-lbl">Neural Analysis Progress</span>
+                    <span class="ai-progress-pct" id="ai-progress-pct">0%</span>
+                </div>
+                <div class="ai-progress-track">
+                    <div class="ai-progress-fill" id="ai-progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Estimated Processing Time & Model Specs -->
+            <div class="ai-processing-footer">
+                <div class="ai-footer-item">
+                    <i data-lucide="clock" style="width: 14px; height: 14px; color: var(--color-cyan);"></i>
+                    <span>Est. Time: <strong id="ai-est-time">2.4s</strong></span>
+                </div>
+                <div class="ai-footer-item">
+                    <i data-lucide="shield-check" style="width: 14px; height: 14px; color: var(--color-purple);"></i>
+                    <span>Engine: <strong id="ai-processing-model">EfficientNet-B0</strong></span>
+                </div>
+            </div>
+
+            <!-- Stage Steps Indicator Bar -->
+            <div class="ai-steps-indicator">
+                <div class="ai-step-dot active" id="step-1" title="Uploading"><i data-lucide="upload" style="width:14px;height:14px;"></i></div>
+                <div class="ai-step-line" id="line-1"></div>
+                <div class="ai-step-dot" id="step-2" title="Preprocessing"><i data-lucide="sliders" style="width:14px;height:14px;"></i></div>
+                <div class="ai-step-line" id="line-2"></div>
+                <div class="ai-step-dot" id="step-3" title="Feature Extraction"><i data-lucide="scan" style="width:14px;height:14px;"></i></div>
+                <div class="ai-step-line" id="line-3"></div>
+                <div class="ai-step-dot" id="step-4" title="Running AI Model"><i data-lucide="cpu" style="width:14px;height:14px;"></i></div>
+                <div class="ai-step-line" id="line-4"></div>
+                <div class="ai-step-dot" id="step-5" title="Generating Prediction"><i data-lucide="check-circle-2" style="width:14px;height:14px;"></i></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification System Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
